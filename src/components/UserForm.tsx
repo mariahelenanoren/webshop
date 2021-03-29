@@ -1,4 +1,4 @@
-import { TextField, Box } from "@material-ui/core";
+import { TextField, Box, makeStyles } from "@material-ui/core";
 import { CSSProperties } from "@material-ui/styles";
 import { theme } from "../styling/colorTheme";
 import { useEffect, useState } from "react";
@@ -28,12 +28,21 @@ interface Props {
   setValidation: (validation: React.SetStateAction<Validation>) => void;
 }
 
+const useStyles = makeStyles((theme) => ({
+  inputField: {
+    width: "100%",
+    marginTop: theme.spacing(2),
+    marginRight: theme.spacing(2),
+  },
+}));
+
 export default function UserForm({
   user,
   setUser,
   validation,
   setValidation,
 }: Props) {
+  const classes = useStyles();
   const [error, setError] = useState({
     nameError: "",
     adressError: "",
@@ -108,12 +117,12 @@ export default function UserForm({
   };
 
   return (
-    <Box style={box}>
+    <Box paddingY={"1rem"}>
       <TextField
         value={user.name}
         onChange={(e) => handleChange("name", e.target.value)}
         inputProps={{ autoComplete: "name", style: inputField }}
-        style={textField}
+        className={classes.inputField}
         placeholder="Namn"
         variant="outlined"
         error={Boolean(error.nameError)}
@@ -124,7 +133,7 @@ export default function UserForm({
         onChange={(e) => handleChange("adress", e.target.value)}
         error={Boolean(error.adressError)}
         helperText={error.adressError}
-        style={textField}
+        className={classes.inputField}
         inputProps={{ autoComplete: "street-address", style: inputField }}
         placeholder="Adress"
         variant="outlined"
@@ -134,7 +143,7 @@ export default function UserForm({
         onChange={(e) => handleChange("postal", e.target.value)}
         error={Boolean(error.postalError)}
         helperText={error.postalError}
-        style={textField}
+        className={classes.inputField}
         inputProps={{
           autoComplete: "postal-code",
           style: inputField,
@@ -148,7 +157,7 @@ export default function UserForm({
         onChange={(e) => handleChange("city", e.target.value)}
         error={Boolean(error.cityError)}
         helperText={error.cityError}
-        style={textField}
+        className={classes.inputField}
         inputProps={{
           autoComplete: "address-level2",
           style: inputField,
@@ -161,7 +170,7 @@ export default function UserForm({
         onChange={(e) => handleChange("email", e.target.value)}
         error={Boolean(error.emailError)}
         helperText={error.emailError}
-        style={textField}
+        className={classes.inputField}
         inputProps={{ autoComplete: "email", style: inputField }}
         placeholder="Mail"
         variant="outlined"
@@ -171,7 +180,7 @@ export default function UserForm({
         onChange={(e) => handleChange("phone", e.target.value)}
         error={Boolean(error.phoneError)}
         helperText={error.phoneError}
-        style={textField}
+        className={classes.inputField}
         placeholder="Telefonnummer"
         variant="outlined"
         inputProps={{ autoComplete: "tel", style: inputField }}
@@ -180,19 +189,6 @@ export default function UserForm({
   );
 }
 
-const textField: CSSProperties = {
-  margin: "0 0 1.5rem 0",
-  width: "100%",
-};
-
 const inputField: CSSProperties = {
   backgroundColor: theme.palette.secondary.main,
-};
-
-const box: CSSProperties = {
-  width: "100%",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "flex-start",
 };

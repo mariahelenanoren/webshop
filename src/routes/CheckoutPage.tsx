@@ -1,17 +1,20 @@
-import { Box, Button } from "@material-ui/core";
-import { CSSProperties, useContext, useState, useEffect } from "react";
-import DeliveryForm, { DeliveryInfo } from "../components/DeliveryForm";
-import Footer from "../components/Footer";
+import React, { useContext, useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
+import StepContent from "@material-ui/core/StepContent";
+import Button from "@material-ui/core/Button";
 import Header from "../components/Header";
 import UserForm, { UserInfo } from "../components/UserForm";
-import PaymentForm, { PaymentInfo } from "../components/PaymentForm";
+import { Box } from "@material-ui/core";
 import CartView from "../components/CartView";
-import OrderConfirmationModal from "../components/OrderConfirmationModal";
-import { CartContext } from "../contexts/CartContext";
-import SubTotal from "../components/SubTotal";
-import { Card } from "../components/PaymentForm";
-import { Order, sendOrderToApi } from "../mockedAPI";
 import { generateOrderID } from "../helper";
+import { CartContext } from "../contexts/CartContext";
+import PaymentForm, { Card, PaymentInfo } from "../components/PaymentForm";
+import DeliveryForm, { DeliveryInfo } from "../components/DeliveryForm";
+import { Order, sendOrderToApi } from "../mockedAPI";
+import OrderConfirmationModal from "../components/OrderConfirmationModal";
 
 export interface Validation {
   cartValidation: boolean;
@@ -20,10 +23,88 @@ export interface Validation {
   deliveryValidation: boolean;
 }
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    maxWidth: "45rem",
+    margin: "auto",
+  },
+  button: {
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
+  actionsContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  resetContainer: {
+    padding: theme.spacing(3),
+  },
+}));
+
+function getSteps() {
+  return ["Dina uppgifter", "Betaluppgifter", "Fraktsätt"];
+}
+
+function getStepContent(
+  step: number,
+  user: UserInfo,
+  setUser: (user: UserInfo) => void,
+  paymentInfo: PaymentInfo,
+  setPaymentInfo: (paymentInfo: PaymentInfo) => void,
+  paymentOption: string,
+  setPaymentOption: (paymentOption: string) => void,
+  delivery: DeliveryInfo,
+  setDelivery: (delivery: DeliveryInfo) => void,
+  validation: Validation,
+  setValidation: (validation: React.SetStateAction<Validation>) => void
+) {
+  switch (step) {
+    case 0:
+      return (
+        <UserForm
+          user={user}
+          setUser={setUser}
+          validation={validation}
+          setValidation={setValidation}
+        />
+      );
+    case 1:
+      return (
+        <PaymentForm
+          userPhone={user.phone}
+          paymentInfo={paymentInfo}
+          setPaymentInfo={setPaymentInfo}
+          paymentOption={paymentOption}
+          setPaymentOption={setPaymentOption}
+          validation={validation}
+          setValidation={setValidation}
+        />
+      );
+    case 2:
+      return (
+        <DeliveryForm
+          delivery={delivery}
+          setDelivery={setDelivery}
+          validation={validation}
+          setValidation={setValidation}
+        />
+      );
+    default:
+      return "Unknown error";
+  }
+}
+
 export default function CheckoutPage() {
   const cartContext = useContext(CartContext);
-  const [orderId] = useState(generateOrderID());
+  const [validation, setValidation] = useState<Validation>({
+    cartValidation: false,
+    userValidation: false,
+    paymentValidation: false,
+    deliveryValidation: false,
+  });
+  const [showModal, setShowModal] = useState(false);
   const [cart, setCart] = useState([...cartContext.cart]);
+  const [orderId] = useState(generateOrderID());
   const [totalPriceOfCart, setTotalPriceOfCart] = useState(
     cartContext.getTotalPriceOfCart
   );
@@ -46,17 +127,11 @@ export default function CheckoutPage() {
     klarna: "",
   });
   const [delivery, setDelivery] = useState<DeliveryInfo>({});
-  const [disabled, setDisabled] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [showSubTotal, setShowSubTotal] = useState(false);
-  const [validation, setValidation] = useState<Validation>({
-    cartValidation: Boolean(cartContext.cart.length),
-    paymentValidation: false,
-    userValidation: false,
-    deliveryValidation: false,
-  });
+  const classes = useStyles();
+  const [activeStep, setActiveStep] = useState(0);
+  const steps = getSteps();
 
-  const handleClick = async () => {
+  const confirmOrder = () => {
     let payment: string | Card;
     switch (paymentOption) {
       case "swish":
@@ -78,13 +153,21 @@ export default function CheckoutPage() {
       delivery: delivery,
     };
 
-    setDisabled(true);
     setCart([...cartContext.cart]);
     sendOrderToApi(order).then(() => {
       setTotalPriceOfCart(cartContext.getTotalPriceOfCart);
       setShowModal(true);
       cartContext.emptyCart();
     });
+  };
+  const handleNext = () => {
+    activeStep === steps.length - 1
+      ? confirmOrder()
+      : setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   useEffect(() => {
@@ -93,21 +176,6 @@ export default function CheckoutPage() {
       cartValidation: Boolean(cartContext.cart.length),
     }));
   }, [cartContext, setValidation]);
-
-  useEffect(() => {
-    if (
-      validation.cartValidation === true &&
-      validation.paymentValidation === true &&
-      validation.userValidation === true &&
-      validation.deliveryValidation === true
-    ) {
-      setDisabled(false);
-      setShowSubTotal(true);
-    } else {
-      setDisabled(true);
-      setShowSubTotal(false);
-    }
-  }, [validation]);
 
   return (
     <>
@@ -119,85 +187,60 @@ export default function CheckoutPage() {
         totalCost={delivery.price! + totalPriceOfCart}
       />
       <Header type="white" />
-      <Box className="paddingContainer" style={checkoutContainer}>
-        <form>
-          <CartView />
-          <div style={formContainer}>
-            <p style={heading}>Dina Uppgifter</p>
-            <UserForm
-              user={user}
-              setUser={setUser}
-              validation={validation}
-              setValidation={setValidation}
-            />
-          </div>
-          <div style={formContainer}>
-            <p style={heading}>Betalsätt</p>
-            <PaymentForm
-              userPhone={user.phone}
-              paymentInfo={paymentInfo}
-              setPaymentInfo={setPaymentInfo}
-              paymentOption={paymentOption}
-              setPaymentOption={setPaymentOption}
-              validation={validation}
-              setValidation={setValidation}
-            />
-          </div>
-          <div style={formContainer}>
-            <p style={heading}>Fraktsätt</p>
-            <DeliveryForm
-              delivery={delivery}
-              setDelivery={setDelivery}
-              validation={validation}
-              setValidation={setValidation}
-            />
-          </div>
-          <SubTotal
-            products={cartContext.cart}
-            display={showSubTotal}
-            totalCost={delivery.price! + cartContext.getTotalPriceOfCart()}
-            momsResoult={cartContext.getTotalPriceOfCart() * 0.25}
-            deliveryPrice={delivery.price}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            style={confirmationButton}
-            disabled={disabled}
-            onClick={handleClick}
-          >
-            Slutför köp
-          </Button>
-        </form>
-      </Box>
-      <Footer />
+      <div className={`paddingContainer ${classes.root}`}>
+        <CartView />
+        <Stepper activeStep={activeStep} orientation="vertical">
+          {steps.map((label, index) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+              <StepContent>
+                <Box>
+                  {getStepContent(
+                    index,
+                    user,
+                    setUser,
+                    paymentInfo,
+                    setPaymentInfo,
+                    paymentOption,
+                    setPaymentOption,
+                    delivery,
+                    setDelivery,
+                    validation,
+                    setValidation
+                  )}
+                </Box>
+                <div className={classes.actionsContainer}>
+                  <div>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      className={classes.button}
+                    >
+                      Bakåt
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={
+                        Object.values(validation)[index + 1] &&
+                        validation.cartValidation
+                          ? false
+                          : true
+                      }
+                      onClick={handleNext}
+                      className={classes.button}
+                    >
+                      {activeStep === steps.length - 1
+                        ? "Slutför köp"
+                        : "Nästa"}
+                    </Button>
+                  </div>
+                </div>
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+      </div>
     </>
   );
 }
-
-const checkoutContainer: CSSProperties = {
-  display: "flex",
-  flex: 1,
-  margin: "auto",
-  alignItems: "center",
-  flexDirection: "column",
-  width: "100%",
-  maxWidth: "41rem",
-};
-
-const formContainer: CSSProperties = {
-  width: "100%",
-  padding: "1rem 0",
-};
-
-const heading: CSSProperties = {
-  margin: "1rem 0 1.5rem 0",
-  textAlign: "center",
-};
-
-const confirmationButton: CSSProperties = {
-  width: "100%",
-  fontWeight: 600,
-  borderRadius: 0,
-  marginTop: "1rem",
-};

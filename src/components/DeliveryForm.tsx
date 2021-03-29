@@ -1,11 +1,4 @@
-import {
-  Box,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  FormHelperText,
-} from "@material-ui/core";
+import { Box, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
 import { DateTime } from "luxon";
 import { CSSProperties } from "react";
 import { theme } from "../styling/colorTheme";
@@ -31,7 +24,7 @@ export default function DeliveryForm({
 }: Props) {
   const dt = DateTime.now();
   const postnordDelivery = dt
-    .plus({ days: 1 })
+    .plus({ days: 4 })
     .toLocaleString(DateTime.DATE_FULL);
   const instaboxDelivery = dt
     .plus({ days: 2 })
@@ -51,65 +44,43 @@ export default function DeliveryForm({
   }
 
   return (
-    <Box style={box}>
+    <Box paddingY={"1rem"}>
       <RadioGroup>
-        <FormControl
-          error={!validation.deliveryValidation}
-          component="fieldset"
-        >
-          <FormControlLabel
-            onChange={() => handleChange("postnord", postnordDelivery, 39)}
-            value="postnord"
-            control={<Radio style={{ color: theme.palette.primary.main }} />}
-            label={
-              <p style={label}>
-                Postnord 39kr <br /> Levereras {postnordDelivery}
-              </p>
-            }
-          />
-          <FormControlLabel
-            onChange={() => handleChange("instabox", instaboxDelivery, 49)}
-            value="instabox"
-            control={<Radio style={{ color: theme.palette.primary.main }} />}
-            label={
-              <p style={label}>
-                Instabox 49kr <br /> Levereras {instaboxDelivery}
-              </p>
-            }
-          />
-          <FormControlLabel
-            onChange={() => handleChange("klarna", homeDelivery, 59)}
-            value="Klarna"
-            control={<Radio style={{ color: theme.palette.primary.main }} />}
-            label={
-              <p style={label}>
-                Hemleverans 59kr <br /> Levereras {homeDelivery}
-              </p>
-            }
-          />
-          <FormHelperText style={helperText}>
-            {validation.deliveryValidation
-              ? null
-              : "Vänligen välj en leveransmetod."}
-          </FormHelperText>
-        </FormControl>
+        <FormControlLabel
+          onChange={() => handleChange("postnord", postnordDelivery, 39)}
+          value="postnord"
+          control={<Radio style={{ color: theme.palette.primary.main }} />}
+          label={
+            <p style={label}>
+              <b>Postnord 39kr</b> <br /> Levereras {postnordDelivery} (4 dagar)
+            </p>
+          }
+        />
+        <FormControlLabel
+          onChange={() => handleChange("instabox", instaboxDelivery, 49)}
+          value="instabox"
+          control={<Radio style={{ color: theme.palette.primary.main }} />}
+          label={
+            <p style={label}>
+              <b>Instabox 49kr</b> <br /> Levereras {instaboxDelivery} (3 dagar)
+            </p>
+          }
+        />
+        <FormControlLabel
+          onChange={() => handleChange("klarna", homeDelivery, 59)}
+          value="Klarna"
+          control={<Radio style={{ color: theme.palette.primary.main }} />}
+          label={
+            <p style={label}>
+              <b>Hemleverans 59kr</b> <br /> Levereras {homeDelivery} (3 dagar)
+            </p>
+          }
+        />
       </RadioGroup>
     </Box>
   );
 }
 
-const box: CSSProperties = {
-  width: "100%",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  justifyContent: "flex-start",
-};
-
 const label: CSSProperties = {
   margin: "0 0 1.5rem 0",
-};
-
-const helperText: CSSProperties = {
-  margin: "0 0 0 2.5rem",
 };

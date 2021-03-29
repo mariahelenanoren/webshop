@@ -1,12 +1,11 @@
 import {
-  FormControl,
   RadioGroup,
   FormControlLabel,
   Radio,
   TextField,
-  FormHelperText,
+  Box,
 } from "@material-ui/core";
-import { CSSProperties, useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { Validation } from "../routes/CheckoutPage";
 import {
   validateCardNumber,
@@ -164,152 +163,139 @@ export default function PaymentForm({
   }
 
   return (
-    <div className="modalContainer" style={paymentContainer}>
-      <FormControl error={Boolean(!paymentOption)}>
-        <RadioGroup style={radioContainer} value={paymentOption}>
-          <p style={heading}>Swish</p>
-          <div style={radioContainer}>
-            <FormControlLabel
-              style={radioButton}
-              className="radioButton"
-              value="swish"
-              onChange={() => {
-                handleRadioChange("swish");
-                handleInputChange("swish", userPhone);
-              }}
-              control={<Radio style={{ color: theme.palette.primary.main }} />}
-              label={
+    <Box paddingY={"1rem"}>
+      <RadioGroup style={radioContainer} value={paymentOption}>
+        <p style={heading}>Swish</p>
+        <div style={radioContainer}>
+          <FormControlLabel
+            style={radioButton}
+            className="radioButton"
+            value="swish"
+            onChange={() => {
+              handleRadioChange("swish");
+              handleInputChange("swish", userPhone);
+            }}
+            control={<Radio style={{ color: theme.palette.primary.main }} />}
+            label={
+              <TextField
+                style={textField}
+                helperText={error.swishError}
+                value={paymentInfo.swish}
+                error={Boolean(error.swishError)}
+                onChange={(e) => handleInputChange("swish", e.target.value)}
+                placeholder={"Telefonnummer"}
+                disabled={paymentOption === "swish" ? false : true}
+                variant="outlined"
+                required
+                inputProps={{
+                  style: textFieldBackground,
+                  autoComplete: "tel",
+                }}
+              />
+            }
+          />
+        </div>
+        <p style={heading}>Kort</p>
+        <div style={radioContainer}>
+          <FormControlLabel
+            style={radioButton}
+            className="radioButton"
+            value="card"
+            onChange={() => {
+              handleRadioChange("card");
+              handleInputChange("cardNumber", "");
+              handleInputChange("cvv", "");
+              handleInputChange("validity", "");
+            }}
+            control={<Radio style={{ color: theme.palette.primary.main }} />}
+            label={
+              <div style={columnContainer}>
                 <TextField
                   style={textField}
-                  helperText={error.swishError}
-                  value={paymentInfo.swish}
-                  error={Boolean(error.swishError)}
-                  onChange={(e) => handleInputChange("swish", e.target.value)}
-                  placeholder={"Telefonnummer"}
-                  disabled={paymentOption === "swish" ? false : true}
+                  helperText={error.cardError}
+                  value={paymentInfo.card.cardNumber}
+                  error={Boolean(error.cardError)}
+                  onChange={(e) =>
+                    handleInputChange("cardNumber", e.target.value)
+                  }
+                  placeholder={"Kortnummer"}
+                  disabled={paymentOption === "card" ? false : true}
                   variant="outlined"
-                  required
                   inputProps={{
                     style: textFieldBackground,
-                    autoComplete: "tel",
+                    autoComplete: "cc-number",
                   }}
                 />
-              }
-            />
-          </div>
-          <p style={heading}>Kort</p>
-          <div style={radioContainer}>
-            <FormControlLabel
-              style={radioButton}
-              className="radioButton"
-              value="card"
-              onChange={() => {
-                handleRadioChange("card");
-                handleInputChange("cardNumber", "");
-                handleInputChange("cvv", "");
-                handleInputChange("validity", "");
-              }}
-              control={<Radio style={{ color: theme.palette.primary.main }} />}
-              label={
-                <div style={columnContainer}>
+                <div className="rowContainer">
                   <TextField
-                    style={textField}
-                    helperText={error.cardError}
-                    value={paymentInfo.card.cardNumber}
-                    error={Boolean(error.cardError)}
-                    onChange={(e) =>
-                      handleInputChange("cardNumber", e.target.value)
-                    }
-                    placeholder={"Kortnummer"}
+                    className="textFieldRow"
+                    helperText={error.cvvError}
+                    value={paymentInfo.card.cvv}
+                    error={Boolean(error.cvvError)}
+                    onChange={(e) => handleInputChange("cvv", e.target.value)}
+                    placeholder={"CVV/CVC"}
                     disabled={paymentOption === "card" ? false : true}
                     variant="outlined"
                     inputProps={{
                       style: textFieldBackground,
-                      autoComplete: "cc-number",
+                      autoComplete: "cc-csc",
                     }}
                   />
-                  <div className="rowContainer">
-                    <TextField
-                      className="textFieldRow"
-                      helperText={error.cvvError}
-                      value={paymentInfo.card.cvv}
-                      error={Boolean(error.cvvError)}
-                      onChange={(e) => handleInputChange("cvv", e.target.value)}
-                      placeholder={"CVV/CVC"}
-                      disabled={paymentOption === "card" ? false : true}
-                      variant="outlined"
-                      inputProps={{
-                        style: textFieldBackground,
-                        autoComplete: "cc-csc",
-                      }}
-                    />
-                    <TextField
-                      className="textFieldRow"
-                      helperText={error.validityError}
-                      value={paymentInfo.card.validity}
-                      error={Boolean(error.validityError)}
-                      onChange={(e) =>
-                        handleInputChange("validity", e.target.value)
-                      }
-                      disabled={paymentOption === "card" ? false : true}
-                      variant="outlined"
-                      placeholder={"Giltighetsperiod MM/YY"}
-                      inputProps={{
-                        style: textFieldBackground,
-                        autoComplete: "cc-exp",
-                      }}
-                    />
-                  </div>
+                  <TextField
+                    className="textFieldRow"
+                    helperText={error.validityError}
+                    value={paymentInfo.card.validity}
+                    error={Boolean(error.validityError)}
+                    onChange={(e) =>
+                      handleInputChange("validity", e.target.value)
+                    }
+                    disabled={paymentOption === "card" ? false : true}
+                    variant="outlined"
+                    placeholder={"Giltighetsperiod MM/YY"}
+                    inputProps={{
+                      style: textFieldBackground,
+                      autoComplete: "cc-exp",
+                    }}
+                  />
                 </div>
-              }
-            />
-          </div>
-          <p style={heading}>Klarna</p>
-          <div style={radioContainer}>
-            <FormControlLabel
-              style={radioButton}
-              className="radioButton"
-              value="klarna"
-              onChange={() => {
-                handleRadioChange("klarna");
-                handleInputChange("klarna", "");
-              }}
-              control={<Radio style={{ color: theme.palette.primary.main }} />}
-              label={
-                <TextField
-                  style={textField}
-                  helperText={error.klarnaError}
-                  value={paymentInfo.klarna}
-                  error={Boolean(error.klarnaError)}
-                  onChange={(e) => handleInputChange("klarna", e.target.value)}
-                  placeholder={"Personnummer"}
-                  disabled={paymentOption === "klarna" ? false : true}
-                  variant="outlined"
-                  className={"inputPayment"}
-                  inputProps={{
-                    style: textFieldBackground,
-                    autoComplete: "on",
-                  }}
-                />
-              }
-            />
-          </div>
-        </RadioGroup>
-        <FormHelperText style={helperText}>
-          {paymentOption ? null : "Vänligen välj en betalmetod."}
-        </FormHelperText>
-      </FormControl>
-    </div>
+              </div>
+            }
+          />
+        </div>
+        <p style={heading}>Klarna</p>
+        <div style={radioContainer}>
+          <FormControlLabel
+            style={radioButton}
+            className="radioButton"
+            value="klarna"
+            onChange={() => {
+              handleRadioChange("klarna");
+              handleInputChange("klarna", "");
+            }}
+            control={<Radio style={{ color: theme.palette.primary.main }} />}
+            label={
+              <TextField
+                style={textField}
+                helperText={error.klarnaError}
+                value={paymentInfo.klarna}
+                error={Boolean(error.klarnaError)}
+                onChange={(e) => handleInputChange("klarna", e.target.value)}
+                placeholder={"Personnummer"}
+                disabled={paymentOption === "klarna" ? false : true}
+                variant="outlined"
+                className={"inputPayment"}
+                inputProps={{
+                  style: textFieldBackground,
+                  autoComplete: "on",
+                }}
+              />
+            }
+          />
+        </div>
+      </RadioGroup>
+    </Box>
   );
 }
-
-const paymentContainer: CSSProperties = {
-  width: "100%",
-  backgroundColor: theme.palette.secondary.main,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-};
 
 const radioButton: CSSProperties = {
   width: "100%",
@@ -341,8 +327,4 @@ const columnContainer: CSSProperties = {
 
 const heading: CSSProperties = {
   margin: "1rem 0 0 2.5rem",
-};
-
-const helperText: CSSProperties = {
-  margin: "0.5rem 0 0 2.5rem",
 };
