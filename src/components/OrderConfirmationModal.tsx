@@ -1,12 +1,19 @@
 import { CSSProperties } from "@material-ui/styles";
-import { theme } from "../styling/colorTheme";
-import { Button } from "@material-ui/core";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+} from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { CartItem } from "../contexts/CartContext";
+import React from "react";
 
 interface Props {
   products: CartItem[];
-  totalCost?: number;
+  cartCost?: number;
   name?: string;
   display: boolean;
   orderId: string;
@@ -21,48 +28,41 @@ export default function OrderConfirmationModal(props: Props) {
           <p style={ordernumber}>
             Ordernummer: <b>{props.orderId}</b>
           </p>
-          <div style={productList}>
-            {props.products.map((item: CartItem, index: number) =>
-              index % 2 === 0 ? (
-                <div
-                  key={index}
-                  style={{
-                    ...productSection,
-                    backgroundColor: theme.palette.secondary.main,
-                  }}
-                >
-                  <p style={{ ...section, width: "10rem" }}>{item.name}</p>
-                  <p style={section}>{item.quantity}st</p>
-                  <p style={section}>{item.price * item.quantity}kr</p>
-                </div>
-              ) : (
-                <div
-                  style={{ ...productSection, backgroundColor: "#ffff" }}
-                  key={index}
-                >
-                  <p style={{ ...section, width: "10rem" }}>{item.name}</p>
-                  <p style={section}>{item.quantity}st</p>
-                  <p style={section}>{item.price * item.quantity}kr</p>
-                </div>
-              )
-            )}
-          </div>
-          <div style={summaryContainer}>
-            <p>Total kostnad:</p>
-            <p>
-              <b>{props.totalCost} kr</b>
-            </p>
-          </div>
-          <Link to={"/"}>
-            <Button
-              variant="contained"
-              color="primary"
-              style={confirmationButton}
-            >
-              Ok
-            </Button>
-          </Link>
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableBody>
+                {props.products.map((product) => (
+                  <TableRow key={product.name}>
+                    <TableCell component="th" scope="row">
+                      {product.name}
+                    </TableCell>
+                    <TableCell align="right">
+                      {product.quantity}&nbsp;st
+                    </TableCell>
+                    <TableCell align="right">
+                      {product.price * product.quantity}&nbsp;kr
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
+        <div style={summaryContainer}>
+          <p>Total kostnad:</p>
+          <p>
+            <b>{props.cartCost} kr</b>
+          </p>
+        </div>
+        <Link to={"/"}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={confirmationButton}
+          >
+            Ok
+          </Button>
+        </Link>
       </div>
     );
   } else {
@@ -103,25 +103,6 @@ const confirmationGreeting: CSSProperties = {
 
 const ordernumber: CSSProperties = {
   fontSize: "1rem",
-};
-
-const productList: CSSProperties = {
-  flex: 1,
-  maxHeight: "12rem",
-  overflowY: "scroll",
-};
-
-const productSection: CSSProperties = {
-  display: "flex",
-  padding: "0 0.5rem",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  fontSize: "0.8rem",
-};
-
-const section: CSSProperties = {
-  padding: "0 0.5rem",
 };
 
 const summaryContainer: CSSProperties = {

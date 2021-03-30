@@ -7,9 +7,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     padding: "1.5rem",
-    borderWidth: 1,
-    borderColor: theme.palette.secondary.dark,
-    borderStyle: "solid",
+    boxShadow: "0px 2px 5px 0px rgba(0,0,0,0.1)",
     "& div>.MuiTypography-body1:first-of-type": {
       marginTop: "3rem",
       marginBottom: "1rem",
@@ -21,17 +19,16 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
   },
   divider: {
-    margin: "0.5rem 0",
+    margin: "1rem 0",
   },
   uppercase: {
     textTransform: "uppercase",
   },
   totalCost: {
     fontSize: "1.3rem",
-    margin: "0.5rem 0",
   },
   heading: {
-    margin: "0.5rem 0 3rem 0",
+    margin: "0.5rem 0 1rem 0",
   },
 }));
 

@@ -4,14 +4,14 @@ import { CSSProperties } from "react";
 import { theme } from "../styling/colorTheme";
 import { Validation } from "../routes/CheckoutPage";
 
-export interface DeliveryInfo {
-  supplier?: string;
-  date?: string;
-  price?: number;
+export interface Delivery {
+  supplier: string;
+  date: string;
+  price: number;
 }
 interface Props {
-  delivery: DeliveryInfo;
-  setDelivery: (delivery: DeliveryInfo) => void;
+  delivery: Delivery;
+  setDelivery: (delivery: Delivery) => void;
   validation: Validation;
   setValidation: (validation: Validation) => void;
 }
@@ -45,7 +45,7 @@ export default function DeliveryForm({
 
   return (
     <Box paddingY={"1rem"}>
-      <RadioGroup>
+      <RadioGroup value={delivery.supplier}>
         <FormControlLabel
           onChange={() => handleChange("postnord", postnordDelivery, 39)}
           value="postnord"

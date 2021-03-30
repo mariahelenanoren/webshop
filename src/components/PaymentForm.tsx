@@ -17,10 +17,13 @@ import {
 import { theme } from "../styling/colorTheme";
 import "../styling/style.css";
 
-export interface PaymentInfo {
-  swish: string;
-  card: Card;
-  klarna: string;
+export interface Payment {
+  option: "swish" | "card" | "klarna";
+  info: {
+    swish: string;
+    card: Card;
+    klarna: string;
+  };
 }
 
 export interface Card {
@@ -31,20 +34,16 @@ export interface Card {
 
 interface Props {
   userPhone: string;
-  paymentInfo: PaymentInfo;
-  setPaymentInfo: (paymentInfo: PaymentInfo) => void;
-  paymentOption: string;
-  setPaymentOption: (paymentOption: string) => void;
+  payment: Payment;
+  setPayment: (payment: React.SetStateAction<Payment>) => void;
   validation: Validation;
   setValidation: (validation: React.SetStateAction<Validation>) => void;
 }
 
 export default function PaymentForm({
   userPhone,
-  paymentInfo,
-  setPaymentInfo,
-  paymentOption,
-  setPaymentOption,
+  payment,
+  setPayment,
   validation,
   setValidation,
 }: Props) {
@@ -68,8 +67,8 @@ export default function PaymentForm({
   }
 
   useEffect(() => {
-    if (paymentOption === "swish") {
-      if (error.swishError.length === 0 && paymentInfo?.swish) {
+    if (payment.option === "swish") {
+      if (error.swishError.length === 0 && payment.info.swish) {
         setValidation((prevValidation) => ({
           ...prevValidation,
           paymentValidation: true,
@@ -80,15 +79,15 @@ export default function PaymentForm({
           paymentValidation: false,
         }));
       }
-    } else if (paymentOption === "card") {
+    } else if (payment.option === "card") {
       if (
         error.cardError.length +
           error.cvvError.length +
           error.validityError.length ===
           0 &&
-        (paymentInfo.card.cardNumber,
-        paymentInfo.card.cvv,
-        paymentInfo.card.validity)
+        (payment.info.card.cardNumber,
+        payment.info.card.cvv,
+        payment.info.card.validity)
       ) {
         setValidation((prevValidation) => ({
           ...prevValidation,
@@ -100,8 +99,8 @@ export default function PaymentForm({
           paymentValidation: false,
         }));
       }
-    } else if (paymentOption === "klarna") {
-      if (error.klarnaError.length === 0 && paymentInfo.klarna) {
+    } else if (payment.option === "klarna") {
+      if (error.klarnaError.length === 0 && payment.info.klarna) {
         setValidation((prevValidation) => ({
           ...prevValidation,
           paymentValidation: true,
@@ -113,21 +112,27 @@ export default function PaymentForm({
         }));
       }
     }
-  }, [paymentInfo, error, setValidation, paymentOption]);
+  }, [error, setValidation, payment]);
 
-  function handleRadioChange(radio: string) {
-    setPaymentOption(radio);
+  function handleRadioChange(radio: "swish" | "card" | "klarna") {
+    setPayment((prevState) => ({ ...prevState, option: radio }));
     resetState();
   }
 
   function handleInputChange(field: string, fieldValue: string) {
     if (field === "cardNumber" || field === "cvv" || field === "validity") {
-      setPaymentInfo({
-        ...paymentInfo,
-        card: { ...paymentInfo.card, [field]: fieldValue },
-      });
+      setPayment((prevState) => ({
+        ...prevState,
+        info: {
+          ...prevState.info,
+          card: { ...prevState.info.card, [field]: fieldValue },
+        },
+      }));
     } else {
-      setPaymentInfo({ ...paymentInfo, [field]: fieldValue });
+      setPayment((prevState) => ({
+        ...prevState,
+        info: { ...prevState.info, [field]: fieldValue },
+      }));
     }
 
     if (field === "swish") {
@@ -164,7 +169,7 @@ export default function PaymentForm({
 
   return (
     <Box paddingY={"1rem"}>
-      <RadioGroup style={radioContainer} value={paymentOption}>
+      <RadioGroup style={radioContainer} value={payment.option}>
         <p style={heading}>Swish</p>
         <div style={radioContainer}>
           <FormControlLabel
@@ -180,11 +185,11 @@ export default function PaymentForm({
               <TextField
                 style={textField}
                 helperText={error.swishError}
-                value={paymentInfo.swish}
+                value={payment.info.swish}
                 error={Boolean(error.swishError)}
                 onChange={(e) => handleInputChange("swish", e.target.value)}
                 placeholder={"Telefonnummer"}
-                disabled={paymentOption === "swish" ? false : true}
+                disabled={payment.option === "swish" ? false : true}
                 variant="outlined"
                 required
                 inputProps={{
@@ -213,13 +218,13 @@ export default function PaymentForm({
                 <TextField
                   style={textField}
                   helperText={error.cardError}
-                  value={paymentInfo.card.cardNumber}
+                  value={payment.info.card.cardNumber}
                   error={Boolean(error.cardError)}
                   onChange={(e) =>
                     handleInputChange("cardNumber", e.target.value)
                   }
                   placeholder={"Kortnummer"}
-                  disabled={paymentOption === "card" ? false : true}
+                  disabled={payment.option === "card" ? false : true}
                   variant="outlined"
                   inputProps={{
                     style: textFieldBackground,
@@ -230,11 +235,11 @@ export default function PaymentForm({
                   <TextField
                     className="textFieldRow"
                     helperText={error.cvvError}
-                    value={paymentInfo.card.cvv}
+                    value={payment.info.card.cvv}
                     error={Boolean(error.cvvError)}
                     onChange={(e) => handleInputChange("cvv", e.target.value)}
                     placeholder={"CVV/CVC"}
-                    disabled={paymentOption === "card" ? false : true}
+                    disabled={payment.option === "card" ? false : true}
                     variant="outlined"
                     inputProps={{
                       style: textFieldBackground,
@@ -244,12 +249,12 @@ export default function PaymentForm({
                   <TextField
                     className="textFieldRow"
                     helperText={error.validityError}
-                    value={paymentInfo.card.validity}
+                    value={payment.info.card.validity}
                     error={Boolean(error.validityError)}
                     onChange={(e) =>
                       handleInputChange("validity", e.target.value)
                     }
-                    disabled={paymentOption === "card" ? false : true}
+                    disabled={payment.option === "card" ? false : true}
                     variant="outlined"
                     placeholder={"Giltighetsperiod MM/YY"}
                     inputProps={{
@@ -277,11 +282,11 @@ export default function PaymentForm({
               <TextField
                 style={textField}
                 helperText={error.klarnaError}
-                value={paymentInfo.klarna}
+                value={payment.info.klarna}
                 error={Boolean(error.klarnaError)}
                 onChange={(e) => handleInputChange("klarna", e.target.value)}
                 placeholder={"Personnummer"}
-                disabled={paymentOption === "klarna" ? false : true}
+                disabled={payment.option === "klarna" ? false : true}
                 variant="outlined"
                 className={"inputPayment"}
                 inputProps={{

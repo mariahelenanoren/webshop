@@ -1,4 +1,4 @@
-import { Box, TextField } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { CSSProperties } from "@material-ui/styles";
 import React from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -7,36 +7,11 @@ interface Props {
   imageUrl: string;
   name: string;
   price: number;
-  numberOfProducts?: number | undefined;
+  quantity?: number;
   onClick: React.MouseEventHandler<SVGSVGElement>;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface MenuItem {
-  value: number;
-  label: number;
 }
 
 export default function CartCard(props: Props) {
-  let quantities: MenuItem[] = [];
-  const shortenName = (name: string) => {
-    if (name.length > 11) {
-      const newName = name.slice(0, 11);
-      return newName + "...";
-    } else {
-      return name;
-    }
-  };
-
-  const getQuantities = () => {
-    for (let i = 1; i < 21; i++) {
-      quantities.push({
-        value: i,
-        label: i,
-      });
-    }
-  };
-
   return (
     <Box style={box}>
       <div style={imgContainer}>
@@ -44,28 +19,11 @@ export default function CartCard(props: Props) {
       </div>
       <div style={spaceBetween}>
         <div className={"flex-direction alignStart"}>
-          <p style={itemSpacing}>{shortenName(props.name)}</p>
-
-          <TextField
-            id="quantity"
-            select
-            label=""
-            defaultValue={props.numberOfProducts}
-            onChange={props.handleChange}
-            inputProps={{ style: selector }}
-            SelectProps={{ native: true }}
-          >
-            {getQuantities()}
-            {quantities.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </TextField>
+          <p style={itemSpacing}>{props.name}</p>
         </div>
         <div className={"flex-direction alignEnd"}>
           <p style={itemSpacing}>{props.price} kr</p>
-          <DeleteIcon style = {{cursor: "pointer"}} onClick={props.onClick} />
+          <DeleteIcon style={{ cursor: "pointer" }} onClick={props.onClick} />
         </div>
       </div>
     </Box>
@@ -85,11 +43,6 @@ const itemSpacing: CSSProperties = {
   margin: "0",
 };
 
-const selector: CSSProperties = {
-  width: "4rem",
-  height: "2rem",
-};
-
 const box: CSSProperties = {
   display: "flex",
   height: "6.5rem",
@@ -99,7 +52,6 @@ const box: CSSProperties = {
   justifyContent: "space-between",
   alignItems: "center",
   backgroundColor: "white",
-  boxShadow: "0px 2px 5px 0px rgba(0,0,0,0.2)",
 };
 
 const productImg: CSSProperties = {

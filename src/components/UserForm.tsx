@@ -12,7 +12,7 @@ import {
   validateEmail,
 } from "../../src/validation";
 
-export interface UserInfo {
+export interface User {
   name: string;
   adress: string;
   postal: string;
@@ -22,8 +22,8 @@ export interface UserInfo {
 }
 
 interface Props {
-  user: UserInfo;
-  setUser: (user: UserInfo) => void;
+  user: User;
+  setUser: (user: User) => void;
   validation: Validation;
   setValidation: (validation: React.SetStateAction<Validation>) => void;
 }
@@ -75,7 +75,7 @@ export default function UserForm({
     }
   }, [user, error, setValidation]);
 
-  const handleChange = (field: keyof UserInfo, fieldValue: string) => {
+  const handleChange = (field: keyof User, fieldValue: string) => {
     setUser({ ...user, [field]: fieldValue });
 
     if (field === "name") {
