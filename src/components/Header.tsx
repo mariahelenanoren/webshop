@@ -12,22 +12,15 @@ interface Props {
 export default function Header(props: Props) {
   let bgColor: string;
   let textColor: string;
-  let backgroundGradient: string;
-  let shadow: string;
 
   const cart = useContext(CartContext);
 
   if (props.type === "transparent") {
     bgColor = "transparent";
-    textColor = theme.palette.secondary.main;
-    backgroundGradient =
-      "linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%)";
-    shadow = "";
+    textColor = "#ffff";
   } else {
     bgColor = "white";
     textColor = theme.palette.primary.main;
-    backgroundGradient = "";
-    shadow = "0px 2px 5px 0px rgba(0,0,0,0.1)";
   }
 
   return (
@@ -36,23 +29,29 @@ export default function Header(props: Props) {
       style={{
         ...headerStyling,
         backgroundColor: bgColor,
-        background: backgroundGradient,
-        boxShadow: shadow,
       }}
     >
       <Link style={{ textDecoration: "none" }} to={{ pathname: "/" }}>
         <h1
           style={{
             color: textColor,
-            textShadow: "(0px 0px 3px rgba(0,0,0,0.4))",
+            fontSize: "1.8rem",
           }}
         >
           HEMMA
         </h1>
       </Link>
-      <Link style={{ textDecoration: "none" }} to={{ pathname: "/checkout" }}>
+      <Link
+        style={{ textDecoration: "none", color: textColor }}
+        to={{ pathname: "/checkout" }}
+      >
         <div style={{ position: "relative" }}>
-          <ShoppingCartIcon style={{ ...cartIcon, color: textColor }} />
+          <ShoppingCartIcon
+            style={{
+              ...cartIcon,
+              color: textColor,
+            }}
+          />
           <div style={circle}>{cart.cart.length}</div>
         </div>
       </Link>
@@ -65,9 +64,9 @@ const headerStyling: CSSProperties = {
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  height: "7rem",
+  height: "6rem",
   width: "100%",
-  position: "sticky",
+  zIndex: 20,
 };
 
 const cartIcon: CSSProperties = {
@@ -85,7 +84,7 @@ const circle: CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   borderRadius: "50%",
-  background: theme.palette.primary.main,
+  backgroundColor: "#78b445",
   fontSize: "0.8rem",
   fontWeight: 600,
   color: "white",

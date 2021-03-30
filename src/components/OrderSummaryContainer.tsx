@@ -66,7 +66,7 @@ export default function OrderSummaryContainer(props: Props) {
           <Typography variant="subtitle2">{props.cartCost}&nbsp;kr</Typography>
         </Box>
         <Box className={classes.spaceBetween}>
-          <Typography variant="subtitle2">Moms</Typography>
+          <Typography variant="subtitle2">Varav moms</Typography>
           <Typography variant="subtitle2">{props.tax}&nbsp;kr</Typography>
         </Box>
         <Box className={classes.spaceBetween}>

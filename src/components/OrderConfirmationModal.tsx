@@ -147,7 +147,7 @@ export default function OrderConfirmationModal(props: Props) {
             </Typography>
           </Box>
           <Box className={classes.spaceBetween}>
-            <Typography variant="subtitle2">Moms</Typography>
+            <Typography variant="subtitle2">Varav moms</Typography>
             <Typography variant="subtitle2">
               {props.order.tax}&nbsp;kr
             </Typography>

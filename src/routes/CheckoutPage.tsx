@@ -29,11 +29,17 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     display: "flex",
     flexDirection: "row",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column-reverse",
+    },
   },
   stepContainer: {
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "3rem",
+    },
     padding: 0,
     marginRight: 30,
-    flex: 5,
+    flex: 6,
   },
   button: {
     marginTop: theme.spacing(1),
@@ -47,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
   costContainer: {
     padding: 0,
-    flex: 3,
+    flex: 4,
   },
   heading: {
     fontWeight: 500,
@@ -174,6 +180,7 @@ export default function CheckoutPage() {
       cartContext.emptyCart();
     });
   };
+
   const handleNext = () => {
     activeStep === steps.length - 1
       ? confirmOrder()
@@ -188,12 +195,6 @@ export default function CheckoutPage() {
     setValidation((prevValidation) => ({
       ...prevValidation,
       cartValidation: Boolean(cartContext.cart.length),
-    }));
-
-    setOrder((prevOrder) => ({
-      ...prevOrder,
-      cartCost: cartContext.getTotalPriceOfCart(),
-      tax: cartContext.getTotalPriceOfCart() * 0.25,
     }));
   }, [cartContext, setValidation]);
 
@@ -217,7 +218,7 @@ export default function CheckoutPage() {
             <Stepper activeStep={activeStep} orientation="vertical">
               {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
+                  <StepLabel style={{ color: "#78b445" }}>{label}</StepLabel>
                   <StepContent>
                     <Box>
                       {getStepContent(
