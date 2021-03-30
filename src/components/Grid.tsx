@@ -14,7 +14,7 @@ function GridContainer(props: Props) {
     <div>
       <Grid container spacing={3}>
         {props.products.productProps.map((productProp: Product) => (
-          <Grid item sm={6} md={3} xl={2} key={productProp.id}>
+          <Grid item xs={6} sm={4} md={3} key={productProp.id}>
             {React.createElement(props.products.component, productProp)}
           </Grid>
         ))}

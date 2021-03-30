@@ -87,7 +87,7 @@ export default function ProductPage(props: Props) {
           <p style={productDescription}>{product?.description}</p>
         </div>
       </div>
-      <Footer />
+      <Footer type="customer" />
     </>
   );
 }

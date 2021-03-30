@@ -13,26 +13,32 @@ const useStyles = makeStyles((theme: Theme) =>
       position: "absolute",
       bottom: "1rem",
       fontSize: "2rem",
-      filter: "drop-shadow(0px 0px 3px rgba(0,0,0,0.4))",
+      filter: "drop-shadow(0px 1px 1px rgba(0,0,0,0.4))",
       cursor: "pointer",
-      color: '#ffff',
-      '&:hover': {
-        color: theme.palette.secondary.dark
+      color: "#ffff",
+      "&:hover": {
+        color: theme.palette.secondary.dark,
       },
     },
     leftIcon: {
-      left: "1rem"
+      left: "1rem",
     },
     rightIcon: {
-      right: "1rem"
-    }
-  }),
+      right: "1rem",
+    },
+  })
 );
 
 export default function ProductCardAdmin(props: Product) {
   const classes = useStyles();
   const modal = useContext(ModalContext);
   const products = useContext(ProductContext);
+
+  const handleClick = () => {
+    modal.setModalIsOpen(true);
+    modal.setModalType("edit");
+    modal.setEditProduct(props);
+  };
 
   return (
     <>
@@ -45,11 +51,7 @@ export default function ProductCardAdmin(props: Product) {
           />
           <Edit
             className={`${classes.leftIcon} ${classes.icon}`}
-            onClick={() => ((
-              modal.setModalIsOpen(true),
-              modal.setModalType("edit"),
-              modal.setEditProduct(props)
-              ))}
+            onClick={handleClick}
           />
         </div>
         <div style={productDescription}>
@@ -63,7 +65,7 @@ export default function ProductCardAdmin(props: Product) {
 
 const productContainer: CSSProperties = {
   width: "100%",
-  height: "23rem",
+  height: "fit-content",
 };
 
 const imageContainer: CSSProperties = {

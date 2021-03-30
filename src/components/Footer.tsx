@@ -1,19 +1,23 @@
-import { Button} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import React, { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { theme } from "../styling/colorTheme";
 import "../styling/style.css";
 
+interface Props {
+  type: "customer" | "admin";
+}
+
 const buttonStyle: CSSProperties = {
-  width: "9.5rem",
-  height: "1.8rem",
-  fontSize: "0.75rem",
-   backgroundColor: "white",
+  padding: "0 1rem",
+  height: "2rem",
+  fontSize: "0.8rem",
+  backgroundColor: "white",
   display: "flex",
   alignItems: "center",
   borderRadius: 0,
   fontFamily: "Roboto",
-  textTransform: "capitalize", 
+  textTransform: "capitalize",
   fontWeight: 500,
 };
 
@@ -26,12 +30,22 @@ const boxStyle: CSSProperties = {
   backgroundColor: theme.palette.primary.main,
 };
 
-export default function Footer() {
+export default function Footer(props: Props) {
   return (
     <div className={"footerDiv"} style={boxStyle}>
-      <Link style={{ textDecoration: "none" }} to={{ pathname: "/admin" }}>
-          <Button className = {"footerButton"}style={buttonStyle}>Adminstratörssidan</Button>
-      </Link>
+      {props.type === "customer" ? (
+        <Link style={{ textDecoration: "none" }} to={{ pathname: "/admin" }}>
+          <Button className={"footerButton"} style={buttonStyle}>
+            Adminstratörssidan
+          </Button>
+        </Link>
+      ) : (
+        <Link style={{ textDecoration: "none" }} to={{ pathname: "/" }}>
+          <Button className={"footerButton"} style={buttonStyle}>
+            Startssidan
+          </Button>
+        </Link>
+      )}
     </div>
   );
 }

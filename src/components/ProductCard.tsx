@@ -8,21 +8,29 @@ import { Product } from "../products";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
-createStyles({
-  icon: {
-    zIndex: 1,
-    position: "absolute",
-    fontSize: "2rem",
-    filter: "drop-shadow(0px 0px 3px rgba(0,0,0,0.4))",
-    cursor: "pointer",
-    right: "1rem",
-    bottom: "1rem",
-    color: "#ffff",
-    '&:hover': {
-      color: theme.palette.secondary.dark
+  createStyles({
+    icon: {
+      zIndex: 1,
+      position: "absolute",
+      fontSize: "2rem",
+      filter: "drop-shadow(0px 1px 1px rgba(0,0,0,0.4))",
+      cursor: "pointer",
+      right: "1rem",
+      bottom: "1rem",
+      color: "#ffff",
+      "&:hover": {
+        color: theme.palette.secondary.dark,
+      },
     },
-  }
-}),
+    image: {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      "&:hover": {
+        filter: "brightness(0.8)",
+      },
+    },
+  })
 );
 
 export default function ProductCard(props: Product) {
@@ -40,10 +48,10 @@ export default function ProductCard(props: Product) {
   };
 
   useEffect(() => {
-        return () => {
-            showModal(false)
-        }
-    }, [])
+    return () => {
+      showModal(false);
+    };
+  }, []);
 
   return (
     <>
@@ -55,11 +63,12 @@ export default function ProductCard(props: Product) {
         <div style={productContainer}>
           <div style={imageContainer}>
             <img
-              style={productImage}
+              className={classes.image}
               src={props.imageUrl}
               alt={props.name}
             ></img>
-              <AddCircle className={classes.icon}
+            <AddCircle
+              className={classes.icon}
               onClick={(e) => handleClick(e)}
             />
           </div>
@@ -75,20 +84,13 @@ export default function ProductCard(props: Product) {
 
 const productContainer: CSSProperties = {
   width: "100%",
-  height: "23rem",
+  height: "fit-content",
 };
 
 const imageContainer: CSSProperties = {
   position: "relative",
   width: "100%",
   height: "75%",
-};
-
-const productImage: CSSProperties = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  objectPosition: "center",
 };
 
 const productDescription: CSSProperties = {

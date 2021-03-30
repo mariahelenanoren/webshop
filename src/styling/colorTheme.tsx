@@ -9,6 +9,11 @@ export const theme = createMuiTheme({
         },
       },
     },
+    MuiBadge: {
+      colorPrimary: {
+        backgroundColor: "#78b445",
+      },
+    },
   },
   palette: {
     primary: {

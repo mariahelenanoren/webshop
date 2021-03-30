@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
   },
   stepContainer: {
     [theme.breakpoints.down("sm")]: {
-      marginTop: "3rem",
+      marginTop: "4rem",
+      marginRight: 0,
     },
     padding: 0,
     marginRight: 30,

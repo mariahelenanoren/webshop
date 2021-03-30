@@ -22,7 +22,10 @@ export default function StartPage() {
   });
 
   useEffect(() => {
-    setProductList((prevList) => ({ ...prevList, productProps: context.productList }));
+    setProductList((prevList) => ({
+      ...prevList,
+      productProps: context.productList,
+    }));
   }, [context.productList, setProductList]);
 
   return (
@@ -34,7 +37,7 @@ export default function StartPage() {
           <Grid products={productList} />
         </div>
       </Box>
-      <Footer />
+      <Footer type="customer" />
     </>
   );
 }
