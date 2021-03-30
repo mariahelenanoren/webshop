@@ -10,6 +10,7 @@ export interface Order {
   delivery: Delivery;
   cartCost: number;
   tax: number;
+  orderId: string;
 }
 
 export async function sendOrderToApi(order: Order) {
