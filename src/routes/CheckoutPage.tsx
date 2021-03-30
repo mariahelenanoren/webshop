@@ -14,6 +14,7 @@ import DeliveryForm, { Delivery } from "../components/DeliveryForm";
 import { Order, sendOrderToApi } from "../mockedAPI";
 import OrderConfirmationModal from "../components/OrderConfirmationModal";
 import OrderSummaryContainer from "../components/OrderSummaryContainer";
+import { generateOrderID } from "../helper";
 
 export interface Validation {
   cartValidation: boolean;
@@ -114,7 +115,7 @@ export default function CheckoutPage() {
     paymentValidation: false,
     deliveryValidation: false,
   });
-  const [showModal, setShowModal] = useState(false);
+  const [modal, showModal] = useState(false);
   const [user, setUser] = useState<User>({
     name: "",
     adress: "",
@@ -137,12 +138,12 @@ export default function CheckoutPage() {
   });
 
   const [delivery, setDelivery] = useState<Delivery>({
-    supplier: "postnord",
+    supplier: "",
     date: "",
     price: 0,
   });
 
-  const [order] = useState<Order>({
+  const [order, setOrder] = useState<Order>({
     cart: cartContext.cart,
     user: user,
     payment: {
@@ -152,11 +153,24 @@ export default function CheckoutPage() {
     delivery: delivery,
     cartCost: cartContext.getTotalPriceOfCart(),
     tax: cartContext.getTotalPriceOfCart() * 0.25,
+    orderId: generateOrderID(),
   });
 
   const confirmOrder = () => {
+    setOrder({
+      cart: cartContext.cart,
+      user: user,
+      payment: {
+        option: payment.option,
+        info: payment.info[payment.option],
+      },
+      delivery: delivery,
+      cartCost: cartContext.getTotalPriceOfCart(),
+      tax: cartContext.getTotalPriceOfCart() * 0.25,
+      orderId: generateOrderID(),
+    });
     sendOrderToApi(order).then(() => {
-      setShowModal(true);
+      showModal(true);
       cartContext.emptyCart();
     });
   };
@@ -175,6 +189,12 @@ export default function CheckoutPage() {
       ...prevValidation,
       cartValidation: Boolean(cartContext.cart.length),
     }));
+
+    setOrder((prevOrder) => ({
+      ...prevOrder,
+      cartCost: cartContext.getTotalPriceOfCart(),
+      tax: cartContext.getTotalPriceOfCart() * 0.25,
+    }));
   }, [cartContext, setValidation]);
 
   useEffect(() => {
@@ -182,17 +202,11 @@ export default function CheckoutPage() {
       ...prevState,
       info: { ...prevState.info, swish: user.phone },
     }));
-  }, [user]);
+  }, [setPayment, user.phone]);
 
   return (
     <>
-      <OrderConfirmationModal
-        display={showModal}
-        orderId={"0"}
-        products={order.cart}
-        name={order.user.name}
-        cartCost={order.cartCost}
-      />
+      {modal && <OrderConfirmationModal order={order} />}
       <Header type="white" />
       <div className={"paddingContainer"}>
         <div className={classes.root}>

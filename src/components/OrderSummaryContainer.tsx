@@ -6,7 +6,7 @@ import CartCard from "./CartCard";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    padding: "1.5rem",
+    padding: "2rem 1.5rem",
     boxShadow: "0px 2px 5px 0px rgba(0,0,0,0.1)",
     "& div>.MuiTypography-body1:first-of-type": {
       marginTop: "3rem",
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1.3rem",
   },
   heading: {
-    margin: "0.5rem 0 1rem 0",
+    marginBottom: "1rem",
   },
 }));
 
@@ -49,11 +49,12 @@ export default function OrderSummaryContainer(props: Props) {
       </Typography>
       {cartContext.cart.map((cartItem) => (
         <CartCard
-          onClick={() => cartContext.removeProduct(cartItem)}
-          imageUrl={cartItem.imageUrl}
-          name={cartItem.name}
-          price={cartItem.price}
-          quantity={cartItem.quantity}
+          key={cartItem.id}
+          removeProduct={(item) => cartContext.removeProduct(item)}
+          updateQuantity={(item, quantity) =>
+            cartContext.updateQuantity(item, quantity)
+          }
+          cartItem={cartItem}
         />
       ))}
       <Box marginTop={"1.5rem"}>

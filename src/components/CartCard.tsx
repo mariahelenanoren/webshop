@@ -7,13 +7,12 @@ import {
 } from "@material-ui/core";
 import React, { CSSProperties } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { CartItem } from "../contexts/CartContext";
 
 interface Props {
-  imageUrl: string;
-  name: string;
-  price: number;
-  quantity?: number;
-  onClick: React.MouseEventHandler<SVGSVGElement>;
+  cartItem: CartItem;
+  removeProduct: (item: CartItem) => void;
+  updateQuantity: (cartItem: CartItem, quantity: number) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -22,8 +21,9 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     top: "0.5rem",
     color: theme.palette.primary.main,
-    "&hover": {
-      color: "red",
+    "&:hover": {
+      color: theme.palette.primary.dark,
+      cursor: "pointer",
     },
   },
   lineHeight: {
@@ -33,8 +33,12 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     bottom: "0.5rem",
     borderRadius: 0,
+    "&>.MuiButton-outlined:nth-of-type(2):hover": {
+      backgroundColor: "#ffff",
+      borderColor: "rgba(73, 73, 73, 0.5)",
+    },
     "&>.MuiButton-outlined:nth-of-type(1), &>.MuiButton-outlined:nth-of-type(3)": {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.secondary.light,
     },
     "&>.MuiButton-outlined": {
       borderRadius: 0,
@@ -49,26 +53,41 @@ export default function CartCard(props: Props) {
   return (
     <Box style={cardContainer}>
       <div style={imgContainer}>
-        <img style={productImg} src={props.imageUrl} alt="product" />
+        <img style={productImg} src={props.cartItem.imageUrl} alt="product" />
       </div>
       <div style={contentContainer}>
         <div style={informationContainer}>
           <Typography className={classes.lineHeight} variant="subtitle1">
-            {props.name}
+            {props.cartItem.name}
           </Typography>
           <Typography className={classes.lineHeight} variant="subtitle2">
-            {props.price}&nbsp;kr
+            {props.cartItem.price * props.cartItem.quantity}&nbsp;kr
           </Typography>
         </div>
-        <DeleteIcon className={classes.icon} onClick={props.onClick} />
+        <DeleteIcon
+          className={classes.icon}
+          onClick={() => props.removeProduct(props.cartItem)}
+        />
         <ButtonGroup
           className={classes.buttonGroup}
           color="primary"
           aria-label="outlined primary button group"
         >
-          <Button>+</Button>
-          <Button>{props.quantity}</Button>
-          <Button>-</Button>
+          <Button
+            onClick={() =>
+              props.updateQuantity(props.cartItem, props.cartItem.quantity - 1)
+            }
+          >
+            -
+          </Button>
+          <Button>{props.cartItem.quantity}</Button>
+          <Button
+            onClick={() =>
+              props.updateQuantity(props.cartItem, props.cartItem.quantity + 1)
+            }
+          >
+            +
+          </Button>
         </ButtonGroup>
       </div>
     </Box>

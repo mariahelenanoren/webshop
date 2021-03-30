@@ -49,11 +49,13 @@ export default class CartProvider extends Component<{}, CartState> {
   };
 
   updateQuantity = (product: CartItem, quantity: number) => {
-    let newCart = [...this.state.cart];
-    const cartItem = newCart.find((cartItem) => cartItem.id === product.id);
-    cartItem!.quantity = quantity;
-    this.setState({ cart: newCart });
-    saveCartToLocalStorage(newCart);
+    if (quantity !== 0) {
+      let newCart = [...this.state.cart];
+      const cartItem = newCart.find((cartItem) => cartItem.id === product.id);
+      cartItem!.quantity = quantity;
+      this.setState({ cart: newCart });
+      saveCartToLocalStorage(newCart);
+    }
   };
 
   emptyCart = () => {
