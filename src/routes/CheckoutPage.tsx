@@ -308,7 +308,7 @@ export default function CheckoutPage() {
               Återvänd till startssidan för att fortsätta utforska vårt
               sortiment.
             </Typography>
-            <Link to="/">
+            <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
               <Button
                 variant="contained"
                 color="primary"

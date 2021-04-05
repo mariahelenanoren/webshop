@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#ffff",
       fontSize: "2rem",
       textAlign: "center",
-      textShadow: "0px 1.5px 1px rgba(150, 150, 150, 1)",
+      textShadow: "0px 1.5px 1px rgba(0, 0, 0, 0.3)",
       background:
         "linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 30%)",
       zIndex: 10,
