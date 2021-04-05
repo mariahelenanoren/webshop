@@ -4,10 +4,10 @@ import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepContent from "@material-ui/core/StepContent";
-import Button from "@material-ui/core/Button";
 import Header from "../components/Header";
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import UserForm, { User } from "../components/UserForm";
-import { Box, Container, Typography } from "@material-ui/core";
+import { Box, Container, Typography, Button } from "@material-ui/core";
 import { CartContext } from "../contexts/CartContext";
 import PaymentForm, { Payment } from "../components/PaymentForm";
 import DeliveryForm, { Delivery } from "../components/DeliveryForm";
@@ -59,6 +59,20 @@ const useStyles = makeStyles((theme) => ({
   heading: {
     fontWeight: 500,
     textTransform: "uppercase",
+  },
+  defaultContainer: {
+    display: "flex",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    "& .MuiSvgIcon-root": {
+      fontSize: "2.5rem",
+      marginBottom: "1rem",
+    },
+  },
+  homeButton: {
+    marginTop: "1rem",
   },
 }));
 
@@ -210,70 +224,98 @@ export default function CheckoutPage() {
     <>
       {modal && <OrderConfirmationModal order={order} />}
       <Header type="white" />
-      <div className={"paddingContainer"}>
-        <div className={classes.root}>
-          <div className={classes.stepContainer}>
-            <Typography className={classes.heading} align="center" variant="h5">
-              Utcheckning
-            </Typography>
-            <Stepper activeStep={activeStep} orientation="vertical">
-              {steps.map((label, index) => (
-                <Step key={label}>
-                  <StepLabel style={{ color: "#78b445" }}>{label}</StepLabel>
-                  <StepContent>
-                    <Box>
-                      {getStepContent(
-                        index,
-                        user,
-                        setUser,
-                        payment,
-                        setPayment,
-                        delivery,
-                        setDelivery,
-                        validation,
-                        setValidation
-                      )}
-                    </Box>
-                    <div className={classes.actionsContainer}>
-                      <div>
-                        <Button
-                          disabled={activeStep === 0}
-                          onClick={handleBack}
-                          className={classes.button}
-                        >
-                          Bakåt
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          disabled={
-                            Object.values(validation)[index + 1] &&
-                            validation.cartValidation
-                              ? false
-                              : true
-                          }
-                          onClick={handleNext}
-                          className={classes.button}
-                        >
-                          {activeStep === steps.length - 1
-                            ? "Slutför köp"
-                            : "Nästa"}
-                        </Button>
+      <div className={"paddingContainer"} style={{ display: "flex", flex: 1 }}>
+        {cartContext.cart.length ? (
+          <div className={classes.root}>
+            <div className={classes.stepContainer}>
+              <Typography
+                className={classes.heading}
+                align="center"
+                variant="h5"
+              >
+                Utcheckning
+              </Typography>
+              <Stepper activeStep={activeStep} orientation="vertical">
+                {steps.map((label, index) => (
+                  <Step key={label}>
+                    <StepLabel style={{ color: "#78b445" }}>{label}</StepLabel>
+                    <StepContent>
+                      <Box>
+                        {getStepContent(
+                          index,
+                          user,
+                          setUser,
+                          payment,
+                          setPayment,
+                          delivery,
+                          setDelivery,
+                          validation,
+                          setValidation
+                        )}
+                      </Box>
+                      <div className={classes.actionsContainer}>
+                        <div>
+                          <Button
+                            disabled={activeStep === 0}
+                            onClick={handleBack}
+                            className={classes.button}
+                          >
+                            Bakåt
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            disabled={
+                              Object.values(validation)[index + 1] &&
+                              validation.cartValidation
+                                ? false
+                                : true
+                            }
+                            onClick={handleNext}
+                            className={classes.button}
+                          >
+                            {activeStep === steps.length - 1
+                              ? "Slutför köp"
+                              : "Nästa"}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </StepContent>
-                </Step>
-              ))}
-            </Stepper>
+                    </StepContent>
+                  </Step>
+                ))}
+              </Stepper>
+            </div>
+            <Container className={classes.costContainer}>
+              <OrderSummaryContainer
+                deliveryCost={delivery.price}
+                tax={order.tax}
+                cartCost={order.cartCost}
+              />
+            </Container>
           </div>
-          <Container className={classes.costContainer}>
-            <OrderSummaryContainer
-              deliveryCost={delivery.price}
-              tax={order.tax}
-              cartCost={order.cartCost}
-            />
-          </Container>
-        </div>
+        ) : (
+          <div className={classes.defaultContainer}>
+            <ShoppingCartIcon color="primary" />
+            <Typography
+              color="primary"
+              variant="h6"
+              className={classes.heading}
+            >
+              Din varukorg är tom!
+            </Typography>
+            <Typography color="primary" variant="body1">
+              Återvänd till startssidan för att fortsätta utforska vårt
+              sortiment.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.homeButton}
+            >
+              Till Startsidan
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );
