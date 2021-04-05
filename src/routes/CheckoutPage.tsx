@@ -15,6 +15,7 @@ import { Order, sendOrderToApi } from "../mockedAPI";
 import OrderConfirmationModal from "../components/OrderConfirmationModal";
 import OrderSummaryContainer from "../components/OrderSummaryContainer";
 import { generateOrderID } from "../helper";
+import { Link } from "react-router-dom";
 
 export interface Validation {
   cartValidation: boolean;
@@ -223,7 +224,7 @@ export default function CheckoutPage() {
   return (
     <>
       {modal && <OrderConfirmationModal order={order} />}
-      <Header type="white" />
+      <Header type={"white"} />
       <div className={"paddingContainer"} style={{ display: "flex", flex: 1 }}>
         {cartContext.cart.length ? (
           <div className={classes.root}>
@@ -288,8 +289,8 @@ export default function CheckoutPage() {
             <Container className={classes.costContainer}>
               <OrderSummaryContainer
                 deliveryCost={delivery.price}
-                tax={order.tax}
-                cartCost={order.cartCost}
+                tax={cartContext.getTotalPriceOfCart() * 0.25}
+                cartCost={cartContext.getTotalPriceOfCart() + delivery.price}
               />
             </Container>
           </div>
@@ -303,17 +304,19 @@ export default function CheckoutPage() {
             >
               Din varukorg är tom!
             </Typography>
-            <Typography color="primary" variant="body1">
+            <Typography align="center" color="primary" variant="body1">
               Återvänd till startssidan för att fortsätta utforska vårt
               sortiment.
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.homeButton}
-            >
-              Till Startsidan
-            </Button>
+            <Link to="/">
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.homeButton}
+              >
+                Till Startsidan
+              </Button>
+            </Link>
           </div>
         )}
       </div>

@@ -2,6 +2,7 @@ import { CSSProperties } from "@material-ui/styles";
 import {
   Box,
   Button,
+  capitalize,
   Divider,
   makeStyles,
   Table,
@@ -12,7 +13,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import React from "react";
 import { Order } from "../mockedAPI";
 
 interface Props {
@@ -27,9 +27,6 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.divider,
     borderWidth: "0 0 1px 0",
     borderStyle: "solid",
-    "& .MuiTypography-subtitle1": {
-      textTransform: "capitalize",
-    },
   },
   priceContainer: {
     padding: "1rem 0",
@@ -122,7 +119,7 @@ export default function OrderConfirmationModal(props: Props) {
           </Typography>
           <Typography variant="subtitle2">Betalmetod</Typography>
           <Typography variant="subtitle1">
-            {props.order.payment.option}
+            {capitalize(props.order.payment.option)}
           </Typography>
           <Typography
             className={`${classes.uppercase} ${classes.heading}`}
@@ -132,7 +129,7 @@ export default function OrderConfirmationModal(props: Props) {
           </Typography>
           <Typography variant="subtitle2">Leveransmetod</Typography>
           <Typography variant="subtitle1">
-            {props.order.delivery.supplier}
+            {capitalize(props.order.delivery.supplier)}
           </Typography>
           <Typography variant="subtitle2">Beräknat leveransdatum</Typography>
           <Typography variant="subtitle1">
