@@ -6,7 +6,7 @@ Webbshopen HEMMA säljer inredningsprodukter. Applikationen har en startsida, pr
 Alla produkter kan läggas till i varukorgen från både start- och produktsidan. Efter att kunden genomfört sitt köp görs ett anrop till ett mockat API och en orderbekräftelse visas.
 På adminstratörssidan kan användaren lägga till, ändra och ta bort produkter från webbshopen.
 
-[Demo](https://hemma-shop.netlify.app/)
+[Demo](https://hemma-webshop.netlify.app/)
 
 
 -----------
